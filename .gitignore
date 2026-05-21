@@ -1,0 +1,20 @@
+# Log files and temporary files
+*.log
+*.tmp
+*.swp
+
+# Build/output directories
+dist/
+build/
+bin/
+obj/
+
+# Dependency directories
+node_modules/
+venv/
+.venv/
+env/
+
+# Environment and sensitive data
+.env
+
