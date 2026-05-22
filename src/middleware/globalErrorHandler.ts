@@ -13,7 +13,7 @@ const globalErrorHandler = (
   res.status(statusCode).json({
     success: false,
     message: err.message || "Internal Server Error",
-    error: err.stack || "Internal Server Error",
+    error: err.stack || "Server Error Stack Not Found",
   });
 };
 
