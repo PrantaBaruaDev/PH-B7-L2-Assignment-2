@@ -53,33 +53,14 @@ class IssuesServices {
         const issuesResult = await pool.query(query, values);
         const issues = issuesResult.rows;
 
-        // if (issues.length === 0) {
-        //     return [];
-        // }
-
-        // const reporterIds = [...new Set(issues.map(i => i.reporter_id))];
-
-        // const usersResult = await pool.query(`
-        //     SELECT id, name, role, email
-        //     FROM users
-        //     WHERE id = ANY($1)
-        //     `, [reporterIds]
-        // );
-
-        // const userMap = new Map();
-        // usersResult.rows.forEach(user => {
-        //     userMap.set(user.id, user);
-        // });
-
-        // const finalData = issues.map(issue => {
-        //     const { reporter_id, ...issueReport } = issue;
-
-        //     return {
-        //     ...issueReport,
-        //     reporter: userMap.get(issue.reporter_id) || "User was deleted from record"
-        // }});
-
         return await this.attachReporterDetails(issues);;
+    }
+
+    async getIssueShow(id: string){
+        const issue = await this.getIssuesById(id);
+        if (!issue) return null;
+        const [formatted] = await this.attachReporterDetails([issue]);
+        return formatted;
     }
 
     async getIssuesById(id: string){
@@ -90,8 +71,7 @@ class IssuesServices {
         const values = [id];
 
         const result = await pool.query(query, values);
-        const [issue] = await this.attachReporterDetails(result.rows)
-        return issue;
+        return result.rows[0];
     }
 
     async updateIssues(payload: NewIssues, id: string, user: JwtPayload){

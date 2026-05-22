@@ -31,7 +31,7 @@ const getIssues = async (req: Request, res: Response, next: NextFunction) => {
 const getSingleIssue = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-        const issueData = await issuesService.getIssuesById(id as string);
+        const issueData = await issuesService.getIssueShow(id as string);
         
         sendResponse(res, {
             data: issueData ?? "No Data found",
