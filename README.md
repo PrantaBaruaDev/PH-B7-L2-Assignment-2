@@ -1,4 +1,10 @@
-Example API usage
+# B7A2
+
+## Assignment: DevPulse – Assignment Requirements Specification
+### Name: Pranta Barua
+### Batch: L2B7
+
+## Example API usage
 1️⃣ All issues
 ```bash
 GET /api/issues
