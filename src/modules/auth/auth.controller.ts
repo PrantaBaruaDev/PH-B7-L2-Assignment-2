@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import { sendResponse } from "../../utils/sendResponse";
 import authService from "./auth.service";
 import { verifyToken } from "../../utils/jwt";
@@ -14,7 +14,7 @@ const login = async (req: Request, res: Response) => {
         }, 404);
     }
 
-    const { accessToken, refreshToken, userData } = result;
+    const { accessToken, refreshToken } = result;
     
     const decodedUser = verifyToken(accessToken, "access");
     if (!decodedUser) {

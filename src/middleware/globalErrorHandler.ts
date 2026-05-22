@@ -7,8 +7,7 @@ const globalErrorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-    console.error(err.stack);
-
+    // console.error(err.stack);
     const statusCode = err instanceof AppError ? err.statusCode : 500;
 
   res.status(statusCode).json({

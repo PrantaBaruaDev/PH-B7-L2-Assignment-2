@@ -1,10 +1,7 @@
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import UsersService from "../users/users.service";
-import { config } from "../../config";
-import { pool } from "../../database";
-import type { USERS } from "../users/users.interface";
-import { signToken, verifyToken } from "../../utils/jwt";
+import { signToken } from "../../utils/jwt";
 import { AppError } from "../../errors/AppError";
 
 class AuthServices {
@@ -40,10 +37,8 @@ class AuthServices {
         }
 
         const { accessToken, refreshToken } = signToken(jwtPayload);
-        
-        delete userData.password; 
 
-        return { userData, accessToken, refreshToken };
+        return { accessToken, refreshToken };
     }
 
 }
