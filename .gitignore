@@ -18,3 +18,4 @@ env/
 # Environment and sensitive data
 .env
 
+.vercel
