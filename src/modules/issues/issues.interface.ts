@@ -1,4 +1,5 @@
 import type { ISS_STATUS, ISS_TYPE } from "../../types";
+import type { ReportUser } from "../users/users.interface";
 
 export interface ISSUES {
     id: number;
@@ -13,3 +14,6 @@ export interface ISSUES {
 
 export type NewIssues = Omit<ISSUES, "id" | "created_at" | "updated_at">;
 
+export type IssueWithReporter = Omit<ISSUES, "reporter_id"> & {
+    reporter: ReportUser | string;
+};

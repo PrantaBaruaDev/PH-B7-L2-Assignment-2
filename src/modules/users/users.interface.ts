@@ -12,3 +12,5 @@ export interface USERS {
 
 export type RegisterUser = Omit<USERS, "id" | "created_at" | "updated_at">;
 export type RUser = Omit<USERS, "password">;
+
+export type ReportUser = Omit<USERS, "password" | "email" | "created_at" | "updated_at">;

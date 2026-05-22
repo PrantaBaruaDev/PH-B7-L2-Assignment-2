@@ -1,8 +1,8 @@
 import type { JwtPayload } from "jsonwebtoken";
 import { pool } from "../../database";
 import { AppError } from "../../errors/AppError";
-import type { NewIssues } from "./issues.interface";
-import usersService from "../users/users.service";
+import type { ISSUES, IssueWithReporter, NewIssues } from "./issues.interface";
+import type { ReportUser } from "../users/users.interface";
 
 class IssuesServices {
     private tableName: string = "issues";
@@ -53,32 +53,33 @@ class IssuesServices {
         const issuesResult = await pool.query(query, values);
         const issues = issuesResult.rows;
 
-        if (issues.length === 0) {
-            return [];
-        }
+        // if (issues.length === 0) {
+        //     return [];
+        // }
 
-        const reporterIds = [...new Set(issues.map(i => i.reporter_id))];
+        // const reporterIds = [...new Set(issues.map(i => i.reporter_id))];
 
-        const usersResult = await pool.query(
-            `
-            SELECT id, name, role, email
-            FROM users
-            WHERE id = ANY($1)
-            `,
-            [reporterIds]
-        );
+        // const usersResult = await pool.query(`
+        //     SELECT id, name, role, email
+        //     FROM users
+        //     WHERE id = ANY($1)
+        //     `, [reporterIds]
+        // );
 
-        const userMap = new Map();
-        usersResult.rows.forEach(user => {
-            userMap.set(user.id, user);
-        });
+        // const userMap = new Map();
+        // usersResult.rows.forEach(user => {
+        //     userMap.set(user.id, user);
+        // });
 
-        const finalData = issues.map(issue => ({
-            ...issue,
-            reporter: userMap.get(issue.reporter_id) || null
-        }));
+        // const finalData = issues.map(issue => {
+        //     const { reporter_id, ...issueReport } = issue;
 
-        return finalData;
+        //     return {
+        //     ...issueReport,
+        //     reporter: userMap.get(issue.reporter_id) || "User was deleted from record"
+        // }});
+
+        return await this.attachReporterDetails(issues);;
     }
 
     async getIssuesById(id: string){
@@ -89,7 +90,8 @@ class IssuesServices {
         const values = [id];
 
         const result = await pool.query(query, values);
-        return result.rows[0];
+        const [issue] = await this.attachReporterDetails(result.rows)
+        return issue;
     }
 
     async updateIssues(payload: NewIssues, id: string, user: JwtPayload){
@@ -155,6 +157,36 @@ class IssuesServices {
 
         const result = await pool.query(query, values);
         return result;
+    }
+
+    private async attachReporterDetails(issues: ISSUES[]): Promise<IssueWithReporter[]> {
+        if (issues.length === 0) {
+            return [];
+        }
+
+        const reporterIds = [...new Set(issues.map(i => i.reporter_id))];
+
+        const usersResult = await pool.query(`
+            SELECT id, name, role
+            FROM users
+            WHERE id = ANY($1)
+            `, [reporterIds]
+        );
+
+        const userMap = new Map();
+        usersResult.rows.forEach(user => {
+            userMap.set(user.id, user);
+        });
+
+        const finalData = issues.map(issue => {
+            const { reporter_id, ...issueReport } = issue;
+
+            return {
+            ...issueReport,
+            reporter: userMap.get(issue.reporter_id) || "User record not found!"
+        }});
+
+        return finalData;
     }
 }
 
