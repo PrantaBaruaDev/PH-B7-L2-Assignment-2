@@ -1,6 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import { sendResponse } from "../../utils/sendResponse";
 import authService from "./auth.service";
+import { verifyToken } from "../../utils/jwt";
+import { AppError } from "../../errors/AppError";
 
 const login = async (req: Request, res: Response) => {
 
@@ -14,6 +16,15 @@ const login = async (req: Request, res: Response) => {
 
     const { accessToken, refreshToken, userData } = result;
     
+    const decodedUser = verifyToken(accessToken, "access");
+    if (!decodedUser) {
+        throw new AppError(401, "Invalid access token");
+    }
+    if (decodedUser) {
+        delete decodedUser.iat;
+        delete decodedUser.exp;
+    }
+
     res.cookie("refreshToken", refreshToken, {
         secure: false, // In production => True
         httpOnly: true,
@@ -24,7 +35,7 @@ const login = async (req: Request, res: Response) => {
         message: "Login successful",
         data: {
             token: accessToken,
-            user: {...userData},
+            user: {...decodedUser},
         }
     });
 }

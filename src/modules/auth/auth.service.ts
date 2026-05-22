@@ -46,44 +46,6 @@ class AuthServices {
         return { userData, accessToken, refreshToken };
     }
 
-    async generateFreshToken(token: string) {
-        if(!token){
-            throw new Error("Unauthorized");
-        }
-
-        const result = verifyToken(token, "refresh");
-
-        if (!result) {
-            throw new Error("Invalid or expired refresh token");
-        }
-
-        const decoded = result.decoded;
-
-        const userData = await pool.query(`
-            SELECT * FROM users WHERE id = $1
-            `, [decoded.email]);
-        
-        if(userData.rows.length === 0){
-            throw new Error("User Not Found");
-        }
-
-        const user = userData.rows[0];
-
-        const jwtPayload = {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            created_at: user.created_at,
-            updated_at: user.updated_at,
-        };
-
-        const accessToken = jwt.sign(jwtPayload, config.secret as string, {
-            expiresIn: "15m",
-        });
-
-        return { accessToken };
-    }
 }
 
 export default new AuthServices();

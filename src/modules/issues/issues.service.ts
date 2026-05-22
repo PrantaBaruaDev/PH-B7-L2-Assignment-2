@@ -1,32 +1,25 @@
+import type { JwtPayload } from "jsonwebtoken";
 import { pool } from "../../database";
 import { AppError } from "../../errors/AppError";
 import type { NewIssues } from "./issues.interface";
+import usersService from "../users/users.service";
 
 class IssuesServices {
     private tableName: string = "issues";
-    async createIssues(payload: NewIssues, user: any){
+    async createIssues(payload: NewIssues, userId:string){
         const { title, description, type } = payload;
-        
+
         const query = `
         INSERT INTO ${this.tableName}
             (title, description, type, reporter_id)
         VALUES ($1, $2, $3, $4)
         RETURNING * 
         `;
-        const values = [title, description, type, user.id];
+        const values = [title, description, type, userId];
 
         const result = await pool.query(query, values);
         return result.rows[0];
     }
-
-    // async getAllIssues(){
-    //     const query = `
-    //         SELECT * FROM ${this.tableName} 
-    //     `;
-
-    //     const result = await pool.query(query);
-    //     return result.rows;
-    // }
 
     async getAllIssues(queryParams: any) {
         const { sort = "newest", type, status } = queryParams;
@@ -99,7 +92,7 @@ class IssuesServices {
         return result.rows[0];
     }
 
-    async updateIssues(payload: NewIssues, id: string, user: any){
+    async updateIssues(payload: NewIssues, id: string, user: JwtPayload){
         const { title, description, type, status } = payload;
         const issue = await this.getIssuesById(id);
 

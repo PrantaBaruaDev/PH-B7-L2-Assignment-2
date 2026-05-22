@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import type { ROLES } from "../types";
-import { sendResponse } from "../utils/sendResponse";
 import { verifyToken } from "../utils/jwt";
 import usersService from "../modules/users/users.service";
+import { AppError } from "../errors/AppError";
 
 
 const auth = (...roles: ROLES[]) => {
@@ -11,25 +11,23 @@ const auth = (...roles: ROLES[]) => {
             const token = req.headers.authorization; 
             
             if (!token) {
-                return sendResponse(res, { message: "Access token is missing", error: true }, 401);
+                throw new AppError(401, "Access token is missing");
             }
+
             const decoded = verifyToken(token as string, "access");
             if (!decoded) {
-                return sendResponse(res, { message: "Invalid access token", error: true }, 401);
+                throw new AppError(401, "Invalid access token");
             }
 
             const user = await usersService.getUserByEmail(decoded.email);
             if (!user) {
-                return sendResponse(res, { message: "User not found", error: true }, 404);
+                throw new AppError(401, "User not found");
             }
 
             if(roles.length && !roles.includes(user.role)){
-                return sendResponse(res, {
-                    message: "Forbidden!!,This role have no access!",
-                    error: true,
-                })
+                throw new AppError(403, "You do not have permission to access this resource!");
             }
-            
+
             req.user = decoded;
 
             next();

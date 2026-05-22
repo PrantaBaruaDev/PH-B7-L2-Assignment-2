@@ -1,4 +1,5 @@
 import { pool } from "../../database";
+import { AppError } from "../../errors/AppError";
 import type { RegisterUser } from "./users.interface";
 import bcrypt from "bcryptjs";
 
@@ -13,7 +14,7 @@ class UserServices {
         const query = `
         INSERT INTO ${this.tableName}
             (name, email, password, role)
-        VALUES ($1, $2, $3, $4)
+        VALUES ($1, $2, $3, COALESCE($4, 'contributor'))
         RETURNING * 
         `;
         const values = [name, email, hashPassword, role];
@@ -23,15 +24,6 @@ class UserServices {
         delete result.rows[0].password;
         
         return result.rows[0];
-    }
-
-    async getAllUsers(){
-        const query = `
-            SELECT * FROM ${this.tableName} 
-        `;
-
-        const result = await pool.query(query);
-        return result.rows;
     }
 
     async getUserByEmail(email: string) {
@@ -44,33 +36,22 @@ class UserServices {
         return result.rows[0];
     }
 
-    // async updateUser(payload: RegisterUser, id: string){
-    //     // const { title, description, type } = payload;
+    async getUserById(id: string) {
+        const query = `
+            SELECT * FROM ${this.tableName}
+            WHERE id = $1
+        `;
+        const result = await pool.query(query, [id]);
 
-    //     const query = `
-    //     UPDATE ${this.tableName}
-    //     SET
-    //         name = COALESCE($1, title), 
-    //         email = COALESCE($2, description), 
-    //         password =  COALESCE($3, type)
-    //     WHERE id = $4
-    //     RETURNING * 
-    //     `;
-    //     const values = [title, description, type, id];
-
-    //     const result = await pool.query(query, values);
-    //     return result.rows[0];
-    // }
-
-    // async deleteIssues(id: string){
-    //     const query = `
-    //     DELETE FROM ${this.tableName} WHERE id = $1
-    //     `;
-    //     const values = [id];
-
-    //     const result = await pool.query(query, values);
-    //     return result;
-    // }
+        return result.rows[0];
+    }
+    
+    async checkValidUser (userId: string){
+        const checkValidUser = await this.getUserById(userId);
+        if(!checkValidUser){
+            throw new AppError(404, "User not Found!");
+        }
+    }
 }
 
 export default new UserServices();

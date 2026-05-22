@@ -1,10 +1,11 @@
 import type { NextFunction, Request, Response } from "express"
 import issuesService from "./issues.service"
 import { sendResponse } from "../../utils/sendResponse";
+import { AppError } from "../../errors/AppError";
 
 const createIssues = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const issueData = await issuesService.createIssues(req.body, req.user);
+        const issueData = await issuesService.createIssues(req.body, req.user.id);
         
         sendResponse(res, {
             message: "Issue created successfully",
@@ -60,10 +61,7 @@ const deleteIssues = async (req: Request, res: Response, next: NextFunction) => 
         const issueData = await issuesService.deleteIssues(id as string);
         
         if (issueData.rowCount === 0) {
-            sendResponse(res, {
-                message: "Issue Record Not found!",
-                error: true
-            }, 404);
+            throw new AppError(404, "Issue Record Not found!")
         }
 
         sendResponse(res, {

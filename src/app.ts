@@ -16,10 +16,10 @@ app.use(cors({
 }));
 
 app.get("/", (req: Request, res: Response) => {
-    res.send("DevPluse World");
+    res.send("DevPluse World!");
 })
 
-app.use("/api/auth", usersRoute, authRouter);
+app.use("/api/auth", authRouter, usersRoute);
 app.use("/api/issues", issuesRoute);
 
 

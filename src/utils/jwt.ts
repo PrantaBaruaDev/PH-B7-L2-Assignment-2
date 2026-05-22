@@ -21,7 +21,7 @@ export const verifyToken = (
 
 export const signToken = (payload: RUser) => {
   const accessToken = jwt.sign(payload, config.secret, {
-    expiresIn: "15m",
+    expiresIn: "1h",
   });
 
   const refreshToken = jwt.sign(payload, config.refresh_secret, {
