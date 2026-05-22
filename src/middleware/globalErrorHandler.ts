@@ -14,7 +14,7 @@ const globalErrorHandler = (
     res.status(statusCode).json({
       success: false,
       message: err instanceof Error ? err.message : "Internal Server Error",
-      error: config.node_env === "development" && err instanceof Error ? err.stack?.split("\n") : "Server Error Not Found",
+      error: config.node_env === "development" && err instanceof Error ? err.stack?.split("\n") : undefined,
     });
 };
 
