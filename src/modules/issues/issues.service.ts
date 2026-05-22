@@ -2,7 +2,6 @@ import type { JwtPayload } from "jsonwebtoken";
 import { pool } from "../../database";
 import { AppError } from "../../errors/AppError";
 import type { ISSUES, IssueWithReporter, NewIssues } from "./issues.interface";
-import type { ReportUser } from "../users/users.interface";
 
 class IssuesServices {
     private tableName: string = "issues";
@@ -61,17 +60,6 @@ class IssuesServices {
         if (!issue) return null;
         const [formatted] = await this.attachReporterDetails([issue]);
         return formatted;
-    }
-
-    async getIssuesById(id: string){
-        const query = `
-            SELECT * FROM ${this.tableName} 
-            WHERE id = $1
-        `;
-        const values = [id];
-
-        const result = await pool.query(query, values);
-        return result.rows[0];
     }
 
     async updateIssues(payload: NewIssues, id: string, user: JwtPayload){
@@ -139,6 +127,17 @@ class IssuesServices {
         return result;
     }
 
+    async getIssuesById(id: string){
+        const query = `
+            SELECT * FROM ${this.tableName} 
+            WHERE id = $1
+        `;
+        const values = [id];
+
+        const result = await pool.query(query, values);
+        return result.rows[0];
+    }
+
     private async attachReporterDetails(issues: ISSUES[]): Promise<IssueWithReporter[]> {
         if (issues.length === 0) {
             return [];
@@ -159,11 +158,13 @@ class IssuesServices {
         });
 
         const finalData = issues.map(issue => {
-            const { reporter_id, ...issueReport } = issue;
+            const { reporter_id, created_at, updated_at, ...issueReport } = issue;
 
             return {
             ...issueReport,
-            reporter: userMap.get(issue.reporter_id) || "User record not found!"
+            reporter: userMap.get(reporter_id) || "User record not found!",
+            created_at: created_at,
+            updated_at: updated_at
         }});
 
         return finalData;
