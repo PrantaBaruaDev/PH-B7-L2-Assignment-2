@@ -67,7 +67,7 @@ class IssuesServices {
         const issue = await this.getIssuesById(id);
 
         if (!issue) {
-            throw new Error("Issue not found");
+            throw new AppError(404, "Issue not found");
         }
 
         let query;
@@ -88,7 +88,6 @@ class IssuesServices {
             `;
             values = [title, description, type, status, id];
         }
-
         else if(user.role === "contributor"){
             if(issue.reporter_id !== user.id){
                 throw new AppError(403, "You can only update your own issue");

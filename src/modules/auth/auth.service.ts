@@ -14,15 +14,16 @@ class AuthServices {
         email: string; password: string;
     }) {
         const { email, password } = payload;
-
+        if(!email || !password) {
+            throw new AppError(400, "You must provide email & password properly!");
+        }
+        
         const userData = await UsersService.getUserByEmail(email);
-
         if(!userData) {
             throw new AppError(404, "Invalid User Credentials!");
         }
 
-        const passwordMatching = await this.comparePassword(password, userData.password)
-        
+        const passwordMatching = await this.comparePassword(password, userData.password);
         if (!passwordMatching) {
             throw new AppError(404, "Invalid Password Credentials!");
         }
