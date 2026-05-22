@@ -25,3 +25,9 @@ GET /api/issues?status=open
 ```bash
 GET /api/issues?type=bug&status=open&sort=oldest
 ```
+
+## Package Install.
+
+```bash
+npm i tsup
+```

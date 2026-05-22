@@ -2,6 +2,8 @@ import type { NextFunction, Request, Response } from "express"
 import issuesService from "./issues.service"
 import { sendResponse } from "../../utils/sendResponse";
 import { AppError } from "../../errors/AppError";
+import type { IssuesParam } from "./issues.interface";
+import type { ISS_SORT, ISS_STATUS, ISS_TYPE } from "../../types";
 
 const createIssues = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -17,8 +19,15 @@ const createIssues = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 const getIssues = async (req: Request, res: Response, next: NextFunction) => {
+    
+    const requestParam: IssuesParam = {
+        sort: req.query.sort as ISS_SORT,
+        type: req.query.type as ISS_TYPE,
+        status: req.query.status as ISS_STATUS,
+    };
+
     try {
-        const issueData = await issuesService.getAllIssues(req.query);
+        const issueData = await issuesService.getAllIssues(requestParam);
         
         sendResponse(res, {
             data: issueData ?? "No Data found",

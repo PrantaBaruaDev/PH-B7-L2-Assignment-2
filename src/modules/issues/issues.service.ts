@@ -1,7 +1,8 @@
 import type { JwtPayload } from "jsonwebtoken";
 import { pool } from "../../database";
 import { AppError } from "../../errors/AppError";
-import type { ISSUES, IssueWithReporter, NewIssues } from "./issues.interface";
+import type { ISSUES, IssuesParam, IssueWithReporter, NewIssues } from "./issues.interface";
+import type { ISS_SORT, ISS_STATUS, ISS_TYPE } from "../../types";
 
 class IssuesServices {
     private tableName: string = "issues";
@@ -20,7 +21,7 @@ class IssuesServices {
         return result.rows[0];
     }
 
-    async getAllIssues(queryParams: any) {
+    async getAllIssues(queryParams: IssuesParam) {
         const { sort = "newest", type, status } = queryParams;
 
         let query = `
@@ -28,7 +29,7 @@ class IssuesServices {
             WHERE 1=1
         `;
 
-        const values: any[] = [];
+        const values: (ISS_SORT | ISS_TYPE | ISS_STATUS)[] = [];
         let index = 1;
 
         if (type) {
@@ -71,7 +72,7 @@ class IssuesServices {
         }
 
         let query;
-        let values: any[] = [];
+        let values: (string)[] = [];
 
         if(user.role === "maintainer"){
             query = `
@@ -111,7 +112,7 @@ class IssuesServices {
         } else {
             throw new AppError(401, "Unauthorized");
         }
-        
+
         const result = await pool.query(query, values);
         return result.rows[0];
     }
