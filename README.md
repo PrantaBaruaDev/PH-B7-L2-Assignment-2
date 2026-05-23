@@ -12,9 +12,7 @@
 
 ## 🔗 Live URL
 
-```
 [https://dev-pluse-five.vercel.app/](https://dev-pluse-five.vercel.app/)
-```
 
 ---
 

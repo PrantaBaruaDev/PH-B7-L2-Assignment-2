@@ -74,7 +74,7 @@ class IssuesServices {
         }
 
         this.IssueDescriptionValidation(description);
-        
+
         let query;
         let values: (string)[] = [];
 
@@ -175,7 +175,7 @@ class IssuesServices {
     }
 
     private IssueDescriptionValidation(description: string) {
-        if(!(description.length >= 20)) {
+        if(description && !(description.length >= 20)) {
             throw new AppError(400, "The Description must be minimum 20 characters!");
         }
     }
