@@ -8,6 +8,7 @@ dist/
 build/
 bin/
 obj/
+logs/
 
 # Dependency directories
 node_modules/
@@ -19,4 +20,3 @@ env/
 .env
 
 .vercel
-README2.md
