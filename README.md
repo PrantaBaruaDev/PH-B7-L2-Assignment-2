@@ -103,7 +103,7 @@ src/
 | `id`          | `SERIAL`       | PRIMARY KEY                          |
 | `title`       | `VARCHAR(150)` | NOT NULL                             |
 | `description` | `TEXT`         | NOT NULL `(min 20 chars)`            |
-| `type`        | `VARCHAR(20)`  | `'bug'` or `'feature_request'`       |
+| `type`        | `VARCHAR(20)`  | `'bug'`, `'feature_request'` or `'resolved'`       |
 | `status`      | `VARCHAR(15)`  | DEFAULT `'open'`                     |
 | `reporter_id` | `INTEGER`      | NOT NULL (validated in app logic)    |
 | `created_at`  | `TIMESTAMP`    | DEFAULT `CURRENT_TIMESTAMP`          |
@@ -130,7 +130,7 @@ cd PH-B7-L2-Assignment-2
 ```bash
 npm install
 ```
-## Package Install.
+## Package Install
 
 ```bash
 npm i -g typescript 
@@ -222,7 +222,7 @@ https://dev-pluse-five.vercel.app/api
 | POST   | `/issues`        | Authenticated                 | Create a new issue                       |
 | GET    | `/issues`        | Public                        | Get all issues (with filters & sorting)  |
 | GET    | `/issues/:id`    | Public                        | Get a single issue by ID                 |
-| PATCH  | `/issues/:id`    | Maintainer / Contributor (own, open) | Update an issue                 |
+| PATCH  | `/issues/:id`    | Maintainer / Contributor (own, status = open) | Update an issue                 |
 | DELETE | `/issues/:id`    | Maintainer only               | Delete an issue                          |
 
 ### Query Parameters for `GET /api/issues`
@@ -244,6 +244,59 @@ GET /api/issues?type=bug&status=open&sort=oldest
 ---
 
 ## 📋 Request & Response Examples
+
+### GET `/api/issues`
+
+**Response (200)**
+
+```json
+{
+  "success": true,
+  "message": "Issues retrived successfully",
+  "data": [
+    {
+      "id": 45,
+      "title": "Database connection timeout under load",
+      "description": "Pool exhausts after 50+ concurrent queries, causing 500 errors",
+      "type": "bug",
+      "status": "open",
+      "reporter": {
+        "id": 1,
+        "name": "John Doe",
+        "role": "contributor"
+      },
+      "created_at": "2026-01-20T10:30:00Z",
+      "updated_at": "2026-01-20T14:45:00Z"
+    }
+  ]
+}
+```
+---
+
+### GET `/api/issues/:id`
+
+**Response (200)**
+
+```json
+{
+  "success": true,
+  "message": "Issue retrived successfully",
+  "data": {
+    "id": 45,
+    "title": "Database connection timeout under load",
+    "description": "Pool exhausts after 50+ concurrent queries, causing 500 errors",
+    "type": "bug",
+    "status": "open",
+    "reporter": {
+      "id": 1,
+      "name": "John Doe",
+      "role": "contributor"
+    },
+    "created_at": "2026-01-20T10:30:00Z",
+    "updated_at": "2026-01-20T14:45:00Z"
+  }
+}
+```
 
 ### POST `/api/auth/signup`
 **Request:**
@@ -272,6 +325,13 @@ GET /api/issues?type=bug&status=open&sort=oldest
 ```
 
 ### POST `/api/auth/login`
+**Request:**
+```json
+{
+  "email": "john@devpulse.com",
+  "password": "securePass123"
+}
+```
 **Response (200):**
 ```json
 {
@@ -417,7 +477,8 @@ All error responses follow this structure:
 
 ## 👨‍💻 Author
 
-**Pranta Barua**
+### **Pranta Barua**
+
 Batch: L2B7 — Programming Hero
 
 ---
