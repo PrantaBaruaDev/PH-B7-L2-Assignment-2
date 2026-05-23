@@ -9,6 +9,10 @@ class UserServices {
     async createUser(payload: RegisterUser){
         const { name, email, password, role } = payload;
 
+        if(!name || !email || !password) {
+            throw new AppError(400, "You must provide name, email & password properly!");
+        }
+
         const hashPassword = await bcrypt.hash(password, 12);
 
         const query = `
@@ -34,23 +38,6 @@ class UserServices {
         const result = await pool.query(query, [email]);
 
         return result.rows[0];
-    }
-
-    async getUserById(id: string) {
-        const query = `
-            SELECT * FROM ${this.tableName}
-            WHERE id = $1
-        `;
-        const result = await pool.query(query, [id]);
-
-        return result.rows[0];
-    }
-    
-    async checkValidUser (userId: string){
-        const checkValidUser = await this.getUserById(userId);
-        if(!checkValidUser){
-            throw new AppError(404, "User not Found!");
-        }
     }
 }
 

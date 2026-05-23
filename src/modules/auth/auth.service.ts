@@ -1,4 +1,3 @@
-import jwt, { type JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import UsersService from "../users/users.service";
 import { signToken } from "../../utils/jwt";
@@ -17,7 +16,7 @@ class AuthServices {
         if(!email || !password) {
             throw new AppError(400, "You must provide email & password properly!");
         }
-        
+
         const userData = await UsersService.getUserByEmail(email);
         if(!userData) {
             throw new AppError(404, "Invalid User Credentials!");
@@ -41,7 +40,6 @@ class AuthServices {
 
         return { accessToken, refreshToken };
     }
-
 }
 
 export default new AuthServices();

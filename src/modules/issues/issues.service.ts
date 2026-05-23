@@ -9,7 +9,7 @@ class IssuesServices {
     async createIssues(payload: NewIssues, userId:string){
         const { title, description, type } = payload;
 
-        this.IssueDescriptionValidation(description);
+        this.IssueDescriptionValidation(payload);
 
         const query = `
         INSERT INTO ${this.tableName}
@@ -72,8 +72,6 @@ class IssuesServices {
         if (!issue) {
             throw new AppError(404, "Issue not found");
         }
-
-        this.IssueDescriptionValidation(description);
 
         let query;
         let values: (string)[] = [];
@@ -174,9 +172,19 @@ class IssuesServices {
         return finalData;
     }
 
-    private IssueDescriptionValidation(description: string) {
-        if(description && !(description.length >= 20)) {
+    private IssueDescriptionValidation(payload: NewIssues) {
+        const { title, description, type } = payload;
+
+        if(!title) {
+            throw new AppError(400, "You must provide title, Title field can not be nullable!");
+        }
+
+        if((description && !(description.length >= 20) || !description)) {
             throw new AppError(400, "The Description must be minimum 20 characters!");
+        }
+
+        if(!type) {
+            throw new AppError(400, "You must provide type, Type field can not be nullable!");
         }
     }
 }
