@@ -1,5 +1,3 @@
-//src/utils/logger.ts
-
 import { config } from "../config";
 
 import { write } from "./fsBaseFile";
