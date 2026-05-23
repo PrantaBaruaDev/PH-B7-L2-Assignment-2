@@ -252,21 +252,34 @@ GET /api/issues?type=bug&status=open&sort=oldest
 ```json
 {
   "success": true,
-  "message": "Issues retrived successfully",
   "data": [
     {
-      "id": 45,
+      "id": 6,
       "title": "Database connection timeout under load",
-      "description": "Pool exhausts after 50+ concurrent queries, causing 500 errors",
-      "type": "bug",
+      "description": "Updated description with reproduction steps...",
+      "type": "feature_request",
+      "status": "open",
+      "reporter": {
+        "id": 2,
+        "name": "John Maintainer Doe",
+        "role": "maintainer"
+      },
+      "created_at": "2026-05-23T12:49:33.061Z",
+      "updated_at": "2026-05-23T12:49:33.061Z"
+    },
+    {
+      "id": 3,
+      "title": "john - Database Emargency problem pool exhaustion fix needed",
+      "description": "Updated description with reproduction steps...",
+      "type": "feature_request",
       "status": "open",
       "reporter": {
         "id": 1,
         "name": "John Doe",
         "role": "contributor"
       },
-      "created_at": "2026-01-20T10:30:00Z",
-      "updated_at": "2026-01-20T14:45:00Z"
+      "created_at": "2026-05-23T12:08:51.359Z",
+      "updated_at": "2026-05-23T13:09:25.917Z"
     }
   ]
 }

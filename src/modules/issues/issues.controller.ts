@@ -30,7 +30,8 @@ const getIssues = async (req: Request, res: Response, next: NextFunction) => {
         const issueData = await issuesService.getAllIssues(requestParam);
         
         sendResponse(res, {
-            data: issueData ?? "No Data found",
+            message: "Issues retrived successfully",
+            data: issueData ?? "No Data found"
         });
     } catch (error) {
         next(error);
@@ -43,7 +44,8 @@ const getSingleIssue = async (req: Request, res: Response, next: NextFunction) =
         const issueData = await issuesService.getIssueShow(id as string);
         
         sendResponse(res, {
-            data: issueData ?? "No Data found",
+            message: "Issues retrived successfully",
+            data: issueData ?? "No Data found"
         });
     } catch (error) {
         next(error);
