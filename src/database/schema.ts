@@ -18,7 +18,7 @@ export const createSchema = async() => {
     CREATE TABLE IF NOT EXISTS issues (
         id SERIAL PRIMARY KEY,
         title VARCHAR(150) NOT NULL,
-        description TEXT NOT NULL,
+        description TEXT NOT NULL CHECK (char_length(description) >= 20),
         type VARCHAR(20) CHECK (type IN ('bug', 'feature_request')) NOT NULL,
         status VARCHAR(15) CHECK (status IN ('open', 'in_progress', 'resolved')) DEFAULT 'open' NOT NULL,
         reporter_id INT NOT NULL,

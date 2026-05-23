@@ -9,6 +9,8 @@ class IssuesServices {
     async createIssues(payload: NewIssues, userId:string){
         const { title, description, type } = payload;
 
+        this.IssueDescriptionValidation(description);
+
         const query = `
         INSERT INTO ${this.tableName}
             (title, description, type, reporter_id)
@@ -71,6 +73,8 @@ class IssuesServices {
             throw new AppError(404, "Issue not found");
         }
 
+        this.IssueDescriptionValidation(description);
+        
         let query;
         let values: (string)[] = [];
 
@@ -168,6 +172,12 @@ class IssuesServices {
         }});
 
         return finalData;
+    }
+
+    private IssueDescriptionValidation(description: string) {
+        if(!(description.length >= 20)) {
+            throw new AppError(400, "The Description must be minimum 20 characters!");
+        }
     }
 }
 
